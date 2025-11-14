@@ -1,0 +1,9 @@
+.idea/
+.git/
+build/
+vendor/
+var/
+provisioning/
+.env*
+.phpcs-cache
+.phpunit.result.cache

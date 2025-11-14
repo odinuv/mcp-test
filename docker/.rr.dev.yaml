@@ -1,0 +1,27 @@
+version: '3'
+
+rpc:
+  listen: unix:///code/var/rr.socket
+
+server:
+  command: "php public/index.php"
+  env:
+    - APP_RUNTIME: Runtime\RoadRunnerSymfonyNyholm\Runtime
+
+logs:
+  mode: development
+
+http:
+  address: 0.0.0.0:8080
+  access_logs: true
+  middleware: [static, gzip]
+
+  pool:
+    debug: true
+    num_workers: 2
+    supervisor:
+      max_worker_memory: 100
+
+  static:
+    dir: "public"
+    forbid: [".php"]

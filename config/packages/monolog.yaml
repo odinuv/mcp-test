@@ -1,0 +1,41 @@
+monolog:
+    channels:
+        - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
+
+when@dev:
+    monolog:
+        handlers:
+            main:
+              type: service
+              id: app.main_logs_handler
+              channels: [ '!request', '!console', '!event', '!doctrine' ]
+
+when@test:
+    monolog:
+        handlers:
+            main:
+              type: service
+              id: app.main_logs_handler
+              level: debug
+              channels: [ "!event", "!request" ]
+
+when@prod:
+    monolog:
+        handlers:
+            main:
+                type: filter
+                handler: stdout
+                min_level: info
+                channels: [ '!request', '!console', '!event', '!security', '!messenger', '!deprecation' ]
+
+            # we are not interested in low severity logs from certain framework modules
+            # channels included here should be excluded from the "main" handler
+            framework:
+                type: filter
+                handler: stdout
+                min_level: warning
+                channels: [ security, messenger ]
+
+            stdout:
+                type: service
+                id: app.main_logs_handler

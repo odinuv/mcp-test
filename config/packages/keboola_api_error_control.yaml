@@ -1,0 +1,14 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Keboola\ErrorControl\EventListener\ExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, priority: -32 }
+
+    Keboola\ErrorControl\Monolog\LogProcessor:
+        arguments:
+            $appName: '%app_name%'
+        tags:
+            - { name: monolog.processor, handler: main }

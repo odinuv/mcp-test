@@ -1,0 +1,38 @@
+parameters:
+    app_name: '%env(APP_NAME)%'
+    app_version: '%env(APP_VERSION)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # register all controllers as services (https://symfony.com/doc/current/controller/service.html)
+    # src/Controller/ dir can contain other classes besides actual controllers, only *Controller & *Action are registered
+    App\Controller\:
+        resource: '../src/Controller/**/*{Controller,Action}.php'
+        tags: ['controller.service_arguments']
+
+    App\Controller\IndexAction:
+        tags: ['controller.service_arguments']
+        arguments:
+            $appName: '%app_name%'
+            $appVersion: '%app_version%'
+
+    app.main_logs_handler.factory:
+        class: App\Roadrunner\LogsHandlerFactory
+        arguments:
+            $appRuntime: '%env(default::APP_RUNTIME)%'
+
+    app.main_logs_handler:
+        class: Monolog\Handler\AbstractProcessingHandler
+        factory: ['@app.main_logs_handler.factory', 'createHandler']
+        calls:
+            - ['setFormatter', ['@monolog.formatter.json']]

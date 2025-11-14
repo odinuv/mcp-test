@@ -1,0 +1,8 @@
+services:
+    Keboola\Cors\CorsListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, priority: 64 }
+            - { name: kernel.event_listener, event: kernel.response }
+        arguments:
+            $allowedHeaders:
+                - 'X-StorageApi-Token'

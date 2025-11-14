@@ -1,0 +1,35 @@
+openapi: 3.0.0
+info:
+  title: Symfony Skeleton
+  version: '1.0.0'
+  contact:
+    email: devel@keboola.com
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+
+paths:
+  /health-check:
+    post:
+      summary: Health-check endpoint
+      operationId: healthCheck
+      tags:
+        - Others
+      description: |
+        Checks the service is up & running.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api:
+                    type: string
+                  documentation:
+                    type: string
+                    format: url
+                example:
+                  api: symfony-skeleton
+                  documentation: http://localhost/docs/swagger.yaml
