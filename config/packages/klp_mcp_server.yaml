@@ -14,3 +14,6 @@ klp_mcp_server:
     - App\Mcp\TimeTool
     - App\Mcp\MeteoDataTool
     - App\Mcp\MeteoStationTool
+    - App\Mcp\SentimentDataTool
+    - App\Mcp\ListDatasetsTool
+    - App\Mcp\MapyPlacesTool
