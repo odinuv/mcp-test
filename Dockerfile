@@ -29,7 +29,7 @@ RUN apt-get update -q \
       jq \
       unzip \
  && rm -rf /var/lib/apt/lists/* \
- && install-php-extensions @composer pdo_mysql sockets
+ && install-php-extensions @composer pdo_mysql pdo_pgsql sockets
 
 # create app user
 RUN groupadd -g $APP_USER_GID $APP_USER_NAME \

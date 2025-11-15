@@ -15,3 +15,4 @@ klp_mcp_server:
     - App\Mcp\TimeTool
     - App\Mcp\UuidTool
     - App\Mcp\WeatherTool
+    - App\Mcp\PostgresMeteoTool
