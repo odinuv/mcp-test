@@ -30,19 +30,24 @@ when@prod:
     monolog:
         handlers:
             main:
-                type: filter
-                handler: stdout
-                min_level: info
-                channels: [ '!request', '!console', '!event', '!security', '!messenger', '!deprecation' ]
+                type: stream
+                path: php://stdout
+                channels: [ '!request', '!console', '!event', '!doctrine' ]
+
+
+#                type: filter
+#                handler: stdout
+#                min_level: info
+#                channels: [ '!request', '!console', '!event', '!deprecation' ]
 
             # we are not interested in low severity logs from certain framework modules
             # channels included here should be excluded from the "main" handler
-            framework:
-                type: filter
-                handler: stdout
-                min_level: warning
-                channels: [ security, messenger ]
+#            framework:
+#                type: filter
+#                handler: stdout
+#                min_level: warning
+#                channels: [ security, messenger ]
 
-            stdout:
-                type: service
-                id: app.main_logs_handler
+#            stdout:
+#                type: service
+#                id: app.main_logs_handler

@@ -1,0 +1,88 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: server
+  namespace: '814003077101'
+  selfLink: /apis/serving.knative.dev/v1/namespaces/814003077101/services/server
+  uid: 9eddf5c3-9041-4111-b490-b70ca1c6bd8a
+  resourceVersion: AAZDn0KopBQ
+  generation: 8
+  creationTimestamp: '2025-11-15T08:31:41.588050Z'
+  labels:
+    cloud.googleapis.com/location: europe-central2
+  annotations:
+    serving.knative.dev/creator: ondrej.popelka@keboola.com
+    serving.knative.dev/lastModifier: ondrej.popelka@keboola.com
+    run.googleapis.com/build-enable-automatic-updates: 'false'
+    run.googleapis.com/build-id: 25e43b93-fee1-4c6b-9fb5-b3447ede7d2c
+    run.googleapis.com/build-image-uri: europe-central2-docker.pkg.dev/odin-dev-397012/cloud-run-source-deploy/server
+    run.googleapis.com/build-name: projects/814003077101/locations/europe-central2/builds/25e43b93-fee1-4c6b-9fb5-b3447ede7d2c
+    run.googleapis.com/build-source-location: gs://run-sources-odin-dev-397012-europe-central2/services/server/1763199545.36081-55a3048a8479422587612c1d94bcd00f.zip#1763199545717381
+    run.googleapis.com/client-name: cloud-console
+    run.googleapis.com/operation-id: 33c28596-2933-4818-8246-3bbcc6329777
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
+    run.googleapis.com/invoker-iam-disabled: 'true'
+    run.googleapis.com/maxScale: '100'
+    run.googleapis.com/urls: '["https://server-814003077101.europe-central2.run.app","https://server-pzbonaif4a-lm.a.run.app"]'
+spec:
+  template:
+    metadata:
+      labels:
+        client.knative.dev/nonce: plqxektdde
+        run.googleapis.com/startupProbeType: Custom
+      annotations:
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 517.0.0
+        run.googleapis.com/startup-cpu-boost: 'true'
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      serviceAccountName: 814003077101-compute@developer.gserviceaccount.com
+      containers:
+      - image: europe-central2-docker.pkg.dev/odin-dev-397012/cloud-run-source-deploy/server@sha256:b101e0ab069c99735012931612e5c164381a9fc7aab0bfbf2fd4a567f8466808
+        command:
+        - php
+        args:
+        - -S
+        - 0.0.0.0:8080
+        - -t
+        - public
+        ports:
+        - name: http1
+          containerPort: 8080
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        startupProbe:
+          timeoutSeconds: 240
+          periodSeconds: 240
+          failureThreshold: 10
+          httpGet:
+            path: /health-check
+            port: 8080
+  traffic:
+  - percent: 100
+    latestRevision: true
+status:
+  observedGeneration: 8
+  conditions:
+  - type: Ready
+    status: 'True'
+    lastTransitionTime: '2025-11-15T10:05:57.473300Z'
+  - type: ConfigurationsReady
+    status: 'True'
+    lastTransitionTime: '2025-11-15T10:01:53.217739Z'
+  - type: RoutesReady
+    status: 'True'
+    lastTransitionTime: '2025-11-15T10:05:57.441764Z'
+  latestReadyRevisionName: server-00007-88j
+  latestCreatedRevisionName: server-00007-88j
+  traffic:
+  - revisionName: server-00007-88j
+    percent: 100
+    latestRevision: true
+  url: https://server-pzbonaif4a-lm.a.run.app
+  address:
+    url: https://server-pzbonaif4a-lm.a.run.app

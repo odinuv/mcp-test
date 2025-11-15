@@ -77,4 +77,9 @@ RUN mkdir -p public/docs \
  && mkdir var/ \
  && chown -R "${APP_USER_NAME}:${APP_USER_NAME}" var/
 
-USER $APP_USER_NAME
+# USER $APP_USER_NAME
+
+ENV APP_ENV=dev
+ENV APP_NAME=test-app
+
+CMD ["php", "-S", "0.0.0.0:8080", "-t", "public"]
