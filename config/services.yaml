@@ -26,13 +26,13 @@ services:
             $appName: '%app_name%'
             $appVersion: '%app_version%'
 
-    app.main_logs_handler.factory:
-        class: App\Roadrunner\LogsHandlerFactory
-        arguments:
-            $appRuntime: '%env(default::APP_RUNTIME)%'
+#    app.main_logs_handler.factory:
+#        class: App\Roadrunner\LogsHandlerFactory
+#        arguments:
+#            $appRuntime: '%env(default::APP_RUNTIME)%'
 
-    app.main_logs_handler:
-        class: Monolog\Handler\AbstractProcessingHandler
-        factory: ['@app.main_logs_handler.factory', 'createHandler']
-        calls:
-            - ['setFormatter', ['@monolog.formatter.json']]
+#    app.main_logs_handler:
+#        class: Monolog\Handler\AbstractProcessingHandler
+#        factory: ['@app.main_logs_handler.factory', 'createHandler']
+#        calls:
+#            - ['setFormatter', ['@monolog.formatter.json']]

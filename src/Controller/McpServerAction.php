@@ -15,6 +15,10 @@ class McpServerAction
     #[Route('/mcp', name: 'mcp_server', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
+        error_log("=== MCP Controller Hit ===");
+        error_log("Method: " . $request->getMethod());
+        error_log("Content: " . $request->getContent());
+
         // Create the MCP server
         $server = Server::make()
             ->withServerInfo('PHP Calculator Server', '1.0.0')
