@@ -26,6 +26,12 @@ services:
             $appName: '%app_name%'
             $appVersion: '%app_version%'
 
+    # Register MCP tools
+    App\Mcp\:
+        resource: '../src/Mcp/*Tool.php'
+        public: true
+        tags: ['klp_mcp_server.tool']
+
 #    app.main_logs_handler.factory:
 #        class: App\Roadrunner\LogsHandlerFactory
 #        arguments:

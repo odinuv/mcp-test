@@ -1,3 +1,7 @@
 controllers:
     resource: ../src/Controller/
     type: attribute
+
+klp_mcp_server:
+    resource: '@KlpMcpServerBundle/Resources/config/routes.php'
+    type: php

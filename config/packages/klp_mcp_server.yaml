@@ -1,0 +1,17 @@
+klp_mcp_server:
+  enabled: true
+  server:
+    name: 'Simple MCP Server'
+    version: '1.0.0'
+  server_providers: ['streamable_http', 'sse']
+  sse_adapter: 'cache'
+  adapters:
+    cache:
+      prefix: 'mcp_sse_'
+      ttl: 100
+  tools:
+    - App\Mcp\EchoTool
+    - App\Mcp\CalculatorTool
+    - App\Mcp\TimeTool
+    - App\Mcp\UuidTool
+    - App\Mcp\WeatherTool
