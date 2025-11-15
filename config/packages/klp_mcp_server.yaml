@@ -11,8 +11,6 @@ klp_mcp_server:
       ttl: 100
   tools:
     - App\Mcp\EchoTool
-    - App\Mcp\CalculatorTool
     - App\Mcp\TimeTool
-    - App\Mcp\UuidTool
-    - App\Mcp\WeatherTool
-    - App\Mcp\PostgresMeteoTool
+    - App\Mcp\MeteoDataTool
+    - App\Mcp\MeteoStationTool
