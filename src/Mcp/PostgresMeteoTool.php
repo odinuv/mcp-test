@@ -48,12 +48,12 @@ class PostgresMeteoTool implements StreamableToolInterface
 
     public function execute(array $arguments): ToolResultInterface
     {
-        // Read credentials from environment variables
-        $host = $_ENV['POSTGRES_HOST'] ?? '';
-        $port = (int)($_ENV['POSTGRES_PORT'] ?? 5432);
-        $database = $_ENV['POSTGRES_DATABASE'] ?? '';
-        $username = $_ENV['POSTGRES_USERNAME'] ?? '';
-        $password = $_ENV['POSTGRES_PASSWORD'] ?? '';
+        // Read credentials from environment variables using getenv()
+        $host = getenv('POSTGRES_HOST') ?: '';
+        $port = (int)(getenv('POSTGRES_PORT') ?: 5432);
+        $database = getenv('POSTGRES_DATABASE') ?: '';
+        $username = getenv('POSTGRES_USERNAME') ?: '';
+        $password = getenv('POSTGRES_PASSWORD') ?: '';
 
         if (empty($host) || empty($database) || empty($username)) {
             return new TextToolResult('Error: Missing required environment variables (POSTGRES_HOST, POSTGRES_DATABASE, POSTGRES_USERNAME)');
