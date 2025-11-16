@@ -1,75 +1,77 @@
-# Keboola Symfony Service Skeleton
-This is a simple Symfony service template repository. You can use it to quickly bootstrap a new service according to
-our best practices.
+# MCP Server - Symfony Implementation
 
-See https://keboola.atlassian.net/wiki/spaces/TECH/pages/1603862628 for steps on how to create a new service from the skeleton.
+A Symfony-based MCP (Model Context Protocol) server that exposes various data access and utility tools via HTTP and Server-Sent Events (SSE) endpoints. Built with PHP 8.4 and Symfony 7.3.
 
-## Quick setup
-1. Create a new project using this template repository
-2. Replace `symfony-skeleton` app name in `composer.json`, `config/services.yaml` etc.
-3. Run `docker-compose run --rm dev composer install` to install Composer dependencies
-4. Run `docker-compose up dev-server` to start a webserver
+## Features
 
-## Detailed setup steps
-### Create a project repo
-Start by creating a new project using the skeleton. The easiest way to do that is creating a new GitHub repo and selecting
-`keboola/symfony-skeleton` as a template.
+- **MCP Protocol Support**: Implements the Model Context Protocol specification for AI assistant integration
+- **Multiple Transport Layers**: Supports both StreamableHTTP and SSE transports
+- **Extensible Tool System**: Easy-to-add tools using Symfony's service container
+- **Data Access Tools**: Query meteorological data, sentiment data, and PostgreSQL databases
+- **External API Integration**: Connect to Mapy.cz and other external services
+- **Docker Development Environment**: Consistent development setup with RoadRunner server
 
-**NOTE**: See https://keboola.atlassian.net/wiki/spaces/TECH/pages/1603862628 for more instructions on how to properly setup repo
-permissions.
+## Available MCP Tools
 
-### Setup the app
-The repo provides working web service out of the box, but there are several places containing the application name you
-should replace:
+- **PostgresMeteoTool**: Query meteorological station data from PostgreSQL
+- **MeteoDataTool**: Access meteorological datasets
+- **MeteoStationTool**: Retrieve weather station information
+- **SentimentDataTool**: Access sentiment analysis datasets
+- **ListDatasetsTool**: List available datasets
+- **MapyPlacesTool**: Search places using Mapy.cz API
+- **RecentTrafficTool**: Get recent traffic information
+- **EchoTool**: Echo messages (utility/testing)
+- **TimeTool**: Get current time in specified timezone (utility/testing)
 
-```json
-# composer.json
-{
-"name": "keboola/symfony-skeleton", # <-- put the project name here
-"type": "project",
-...
-```
+## Quick Start
 
-```dotenv
-# .env
-APP_NAME=symfony-skeleton # <-- put the project name here
-```
+### Prerequisites
 
-```php
-# tests/Controller/IndexActionTest.php
-...
-class IndexActionTest extends WebTestCase
-{
-    private const APP_NAME = 'symfony-skeleton'; # <-- put the project name here
-    private const APP_VERSION = 'DEV';
+- Docker and Docker Compose
+- (Optional) API keys for external services like Mapy.cz
 
-    public function testActionReturnsResponse(): void
-...
-```
-
-```yaml
-# docs/swagger.yaml
-openapi: 3.0.0
-info:
-    title: Symfony Skeleton # <-- put the project name here
-    version: '1.0.0'
-...
-```
-
-### Install dependencies
+### Installation
 ```shell
 docker-compose run --rm dev composer install
 ```
 
-### Start the app
+### Configure Environment
+
+Copy `.env` to `.env.local` and configure any necessary environment variables:
+
+```bash
+cp .env .env.local
+```
+
+Required environment variables for specific tools:
+- `MAPY_API_KEY`: For MapyPlacesTool
+- `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DATABASE`, `POSTGRES_USERNAME`, `POSTGRES_PASSWORD`: For PostgresMeteoTool
+
+### Start the Server
+
 ```shell
 docker-compose up dev-server
-``` 
+```
 
-Now the webserver should be running on `localhost:8080`. You can check the app is working by requesting a health-check:
+The server will be running on `localhost:8080`.
+
+### Verify Installation
+
+Check the health endpoint:
 ```shell
-$ curl localhost:8080/health-check                                                       
-{"api":"symfony-skeleton","documentation":"http:\/\/localhost:8080\/docs\/swagger.yaml"}
+curl localhost:8080/health-check
+```
+
+List available MCP tools:
+```shell
+curl -X POST http://localhost:8080/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/list",
+    "params": {}
+  }'
 ```
 
 ## Using Docker
@@ -89,20 +91,89 @@ To run a webserver, hosting your app, use the `dev-server` service:
 docker-compose up dev-server
 ```
 
-To run local tests, use `ci` service. This will validate `composer` files and execute `phpcs`, `phpcs`, `phpstan` and `phpunit` tests.
+To run all CI checks (validation, code style, static analysis, tests), use the `ci` service:
 ```shell
 docker-compose run --rm ci
 ```
 
-## ENV & Configuration
-For local development, we follow Symfony best practices as described in
-[docs](https://symfony.com/doc/current/configuration.html#configuring-environment-variables-in-env-files)
-and use `.env` file:
-* `.env` is versioned, should contain sane defaults to run the service out of the box locally
-* `.env.local` is not versioned, can be created to override any ENV variable locally
-* `.env.test` is versioned, should contain anything extra is needed for `test` environment
+## MCP Endpoints
 
-But these are used for local development only and are not included in final Docker images, used to run the app in
-production. Instead, we put an empty `.env.local.php` file into Docker, disabling the `.env` functionality and all
-configuration must be provided using regular environment variables (like `-e` flag of Docker).
+The server exposes the following MCP protocol endpoints:
+
+### StreamableHTTP Transport
+- `POST /mcp` - Direct HTTP request/response for MCP protocol messages
+
+### SSE Transport
+- `GET /mcp/sse` - Server-Sent Events endpoint for real-time streaming
+- `POST /mcp/messages` - Submit messages to active SSE sessions
+
+### Example: Call a Tool
+
+```bash
+curl -X POST http://localhost:8080/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "tools/call",
+    "params": {
+      "name": "get-time",
+      "arguments": {
+        "timezone": "America/New_York",
+        "format": "Y-m-d H:i:s"
+      }
+    }
+  }'
+```
+
+For more examples, see [MCP_TEST.md](MCP_TEST.md).
+
+## Creating New Tools
+
+1. Create a new class in `src/Mcp/` that implements `StreamableToolInterface`
+2. Add the tool class to `config/packages/klp_mcp_server.yaml`
+3. The tool will be automatically discovered and registered
+
+See [MCP_TEST.md](MCP_TEST.md) for a complete example.
+
+## Environment Configuration
+
+For local development, the application follows Symfony best practices with `.env` files:
+- `.env` - Versioned defaults for local development
+- `.env.local` - Local overrides (not versioned)
+- `.env.test` - Test environment configuration
+
+Production deployments use regular environment variables (Docker `-e` flag) rather than `.env` files.
+
+## Development
+
+### Code Quality
+
+```bash
+# Run code style check
+docker-compose run --rm dev composer phpcs
+
+# Auto-fix code style issues
+docker-compose run --rm dev composer phpcbf
+
+# Run static analysis
+docker-compose run --rm dev composer phpstan
+
+# Run tests
+docker-compose run --rm dev composer phpunit
+```
+
+### Running Single Tests
+
+```bash
+# Run specific test file
+docker-compose run --rm dev vendor/bin/phpunit tests/Controller/IndexActionTest.php
+
+# Run specific test method
+docker-compose run --rm dev vendor/bin/phpunit --filter testActionReturnsResponse
+```
+
+## License
+
+Proprietary
 

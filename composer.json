@@ -1,12 +1,12 @@
 {
-  "name": "keboola/symfony-skeleton",
+  "name": "mcp-server/symfony",
   "type": "project",
   "license": "proprietary",
-  "description": "Keboola Symfony app skeleton",
+  "description": "MCP Server implementation using Symfony",
   "authors": [
     {
-      "name": "Keboola",
-      "email": "devel@keboola.com"
+      "name": "MCP Server",
+      "email": "dev@example.com"
     }
   ],
   "minimum-stability": "stable",
