@@ -17,3 +17,4 @@ klp_mcp_server:
     - App\Mcp\SentimentDataTool
     - App\Mcp\ListDatasetsTool
     - App\Mcp\MapyPlacesTool
+    - App\Mcp\RecentTrafficTool
